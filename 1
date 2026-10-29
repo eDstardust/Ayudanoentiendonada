@@ -1,0 +1,66 @@
+# Ejercicio 1 - Cifrado Cesar con salto segun posicion de palabra
+
+def cifrar_palabra(palabra, salto):
+    """Cifra una sola palabra moviendo cada letra 'salto' posiciones."""
+    resultado = ""  # aqui se guardan las letras ya movidas
+    for letra in palabra:  # recorre la palabra letra por letra
+        if letra.isupper():  # si es mayuscula...
+            base = ord('A')  # ord('A') es 65, me sirve de base para las mayusculas
+            # hago la aritmetica modular: le resto la base, sumo el salto, saco modulo 26
+            nueva_pos = (ord(letra) - base + salto) % 26
+            # chr() convierte de vuelta a letra, sumando la base
+            resultado += chr(nueva_pos + base)
+        elif letra.islower():  # si es minuscula, igual pero con 'a' (que vale 97)
+            base = ord('a')
+            nueva_pos = (ord(letra) - base + salto) % 26
+            resultado += chr(nueva_pos + base)
+        else:  # si no es letra (espacio, signo, numero, etc) se copia igual
+            resultado += letra
+    return resultado
+
+
+def descifrar_palabra(palabra, salto):
+    """Descifrar es igual pero restando el salto (o usando 26 - salto)."""
+    # reutilizo cifrar_palabra pero con el salto en negativo
+    return cifrar_palabra(palabra, -salto)
+
+
+def procesar_frase(frase, modo):
+    """Separa la frase en palabras y aplica el salto segun la posicion."""
+    palabras = frase.split(" ")  # split por espacio, asi conservo la estructura
+    resultado = []  # lista para ir guardando las palabras ya procesadas
+    for i, palabra in enumerate(palabras):  # i es la posicion de la palabra
+        if i % 2 == 0:  # si la posicion es par (0, 2, 4...) le toca salto 3
+            salto = 3
+        else:  # si la posicion es impar (1, 3, 5...) le toca salto 4
+            salto = 4
+        
+        if modo == 'C':  # si el modo es C (cifrar)
+            # llamo a la funcion y meto la palabra cifrada a la lista
+            resultado.append(cifrar_palabra(palabra, salto))
+        else:  # si el modo es D (descifrar)
+            # llamo a la funcion y meto la palabra descifrada a la lista
+            resultado.append(descifrar_palabra(palabra, salto))
+            
+    return " ".join(resultado)  # vuelvo a unir todo con espacios
+
+
+def main():
+    """Funcion principal: lee modo y frase, e imprime el resultado."""
+    print("CIFRADO CÉSARINHO") 
+    
+    modo = input("Ingresa el modo (C para cifrar, D para descifrar): ").strip().upper() 
+    
+    # si el modo no es C ni D, muestra error
+    if modo not in ('C', 'D'):
+        print("Error: Modo inválido. Debe ser C o D.")
+        return  # el return hace que se salga de la funcion y no pida la frase
+    
+    # si el modo esta bien, ahora se pide ingresar la frase
+    frase = input("Ingresa la frase: ") 
+    
+    # si todo esta bien, se procesa la frase y da el resultado
+    print("Resultado:", procesar_frase(frase, modo))
+
+
+main()
